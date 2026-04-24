@@ -11117,17 +11117,20 @@ ${properties}`
 
 	App[FILENAME] = 'src/App.svelte';
 
-	var root_2 = add_locations(from_html(`<div class="app"><nav class="navbar svelte-1n46o8q"><div class="nav-brand svelte-1n46o8q">CropTracker</div> <div class="nav-links svelte-1n46o8q"><button class="nav-btn svelte-1n46o8q">Dashboard</button> <button class="nav-btn svelte-1n46o8q">Fields</button> <span class="user-info svelte-1n46o8q"> </span> <button class="nav-btn logout svelte-1n46o8q">Logout</button></div></nav> <main class="container svelte-1n46o8q"><!></main></div>`), App[FILENAME], [
+	var root_2 = add_locations(from_html(`<div class="app"><nav class="navbar svelte-1n46o8q"><div class="nav-brand svelte-1n46o8q">🌾 CropTracker</div> <div class="nav-links svelte-1n46o8q"><button class="nav-btn svelte-1n46o8q">Dashboard</button> <button class="nav-btn svelte-1n46o8q">Fields</button> <span class="user-pill svelte-1n46o8q"> <span class="role svelte-1n46o8q"> </span></span> <button class="nav-btn logout svelte-1n46o8q">Logout</button></div></nav> <main class="container svelte-1n46o8q"><!></main></div>`), App[FILENAME], [
 		[
-			42,
+			62,
 			2,
 			[
 				[
-					43,
+					63,
 					4,
-					[[44, 6], [45, 6, [[46, 8], [47, 8], [48, 8], [49, 8]]]]
+					[
+						[64, 6],
+						[65, 6, [[66, 8], [67, 8], [68, 8, [[70, 10]]], [72, 8]]]
+					]
 				],
-				[53, 4]
+				[76, 4]
 			]
 		]
 	]);
@@ -11146,32 +11149,57 @@ ${properties}`
 		let currentPage = mutable_source('dashboard');
 		let selectedFieldId = mutable_source(null);
 
+		function parseUrl() {
+			const path = window.location.pathname;
+
+			if (path.startsWith('/fields/')) {
+				const id = path.split('/fields/')[1];
+
+				if (id && !isNaN(id)) {
+					set(currentPage, 'field-detail');
+					set(selectedFieldId, parseInt(id));
+				} else {
+					set(currentPage, 'fields');
+				}
+			} else if (strict_equals(path, '/fields')) {
+				set(currentPage, 'fields');
+			} else {
+				set(currentPage, 'dashboard');
+			}
+		}
+
 		onMount(() => {
 			const token = localStorage.getItem('token');
 			const savedUser = localStorage.getItem('user');
 
 			if (token && savedUser) {
-				try {
-					user.set(JSON.parse(savedUser));
-				} catch(err) {
-					console.error(...log_if_contains_state('error', 'Invalid saved user in localStorage:', err));
-					localStorage.removeItem('token');
-					localStorage.removeItem('user');
-					user.set(null);
-				}
+				user.set(JSON.parse(savedUser));
 			}
+
+			parseUrl();
 		});
 
 		function navigate(page, fieldId = null) {
 			set(currentPage, page);
 			set(selectedFieldId, fieldId);
+
+			let url = '/';
+
+			if (strict_equals(page, 'fields')) url = '/fields';
+			if (strict_equals(page, 'field-detail') && fieldId) url = `/fields/${fieldId}`;
+
+			window.history.pushState({}, '', url);
 		}
 
 		function logout() {
 			localStorage.removeItem('token');
 			localStorage.removeItem('user');
 			user.set(null);
+			set(currentPage, 'dashboard');
+			window.history.pushState({}, '', '/');
 		}
+
+		window.onpopstate = parseUrl;
 
 		var $$exports = {
 			$set: update_legacy_props,
@@ -11185,7 +11213,7 @@ ${properties}`
 
 		{
 			var consequent = ($$anchor) => {
-				add_svelte_meta(() => Login($$anchor, {}), 'component', App, 40, 2, { componentTag: 'Login' });
+				add_svelte_meta(() => Login($$anchor, {}), 'component', App, 60, 2, { componentTag: 'Login' });
 			};
 
 			var alternate = ($$anchor) => {
@@ -11196,7 +11224,10 @@ ${properties}`
 				var button_1 = sibling(button, 2);
 				var span = sibling(button_1, 2);
 				var text = child(span);
+				var span_1 = sibling(text);
+				var text_1 = child(span_1, true);
 
+				reset(span_1);
 				reset(span);
 
 				var button_2 = sibling(span, 2);
@@ -11215,7 +11246,7 @@ ${properties}`
 							}),
 							'component',
 							App,
-							55,
+							78,
 							8,
 							{ componentTag: 'Dashboard' }
 						);
@@ -11228,7 +11259,7 @@ ${properties}`
 							}),
 							'component',
 							App,
-							57,
+							80,
 							8,
 							{ componentTag: 'FieldList' }
 						);
@@ -11244,7 +11275,7 @@ ${properties}`
 							}),
 							'component',
 							App,
-							59,
+							82,
 							8,
 							{ componentTag: 'FieldDetail' }
 						);
@@ -11256,14 +11287,18 @@ ${properties}`
 						}),
 						'if',
 						App,
-						54,
+						77,
 						6
 					);
 				}
 
 				reset(main);
 				reset(div);
-				template_effect(() => set_text(text, `${$user().username ?? ''} (${$user().role ?? ''})`));
+
+				template_effect(() => {
+					set_text(text, `${$user().username ?? ''} `);
+					set_text(text_1, $user().role);
+				});
 
 				event('click', button, function click() {
 					return navigate('dashboard');
@@ -11283,7 +11318,7 @@ ${properties}`
 				}),
 				'if',
 				App,
-				39,
+				59,
 				0
 			);
 		}

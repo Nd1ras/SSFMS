@@ -1,5 +1,5 @@
 node_modules
 .env
 /frontend/assets
-/frontend/vercel.json
+/frontend/public/vercel.json
 /frontend/public/_redirects
