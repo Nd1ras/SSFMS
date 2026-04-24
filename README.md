@@ -127,6 +127,12 @@ npm run dev        # Starts dev server on port 5173
 - **No email notifications:** "At Risk" fields are visible in dashboard but not actively alerted.
 - **Single JWT secret:** In production, use asymmetric keys (RS256) and key rotation.
 
+## Screen Shots
+![alt text](image.png "Title")
+Log in Page
+
+![alt text](image.png "Title")
+Field Agent Page
 ## License
 
 MIT
