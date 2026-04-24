@@ -41,7 +41,11 @@ export default {
 		svelte({
 			compilerOptions: {
 				// enable run-time checks when not in production
-				dev: !production
+				dev: !production,
+				compatibility: {
+					// Keep Svelte 4-style `new App(...)` API used in src/main.js
+					componentApi: 4
+				}
 			}
 		}),
 		// we'll extract any component CSS out into

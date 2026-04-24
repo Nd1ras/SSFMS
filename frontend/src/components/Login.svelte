@@ -1,5 +1,5 @@
 <script>
-  import { user } from '../stores.js';
+  import { user } from '../store.js';
   import { api } from '../api.js';
   
   let username = '';
@@ -32,13 +32,13 @@
     
     <form on:submit|preventDefault={handleLogin}>
       <div class="form-group">
-        <label>Username</label>
-        <input type="text" bind:value={username} required placeholder="admin or agent1" />
+        <label for="username">Username</label>
+        <input id="username" type="text" bind:value={username} required placeholder="admin or agent1" />
       </div>
       
       <div class="form-group">
-        <label>Password</label>
-        <input type="password" bind:value={password} required placeholder="admin123 or agent123" />
+        <label for="password">Password</label>
+        <input id="password" type="password" bind:value={password} required placeholder="admin123 or agent123" />
       </div>
       
       {#if error}

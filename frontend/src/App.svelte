@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { user } from './stores.js';
+  import { user } from './store.js';
   import Login from './components/Login.svelte';
   import Dashboard from './components/Dashboard.svelte';
   import FieldList from './components/FieldList.svelte';
@@ -13,7 +13,14 @@
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
     if (token && savedUser) {
-      user.set(JSON.parse(savedUser));
+      try {
+        user.set(JSON.parse(savedUser));
+      } catch (err) {
+        console.error('Invalid saved user in localStorage:', err);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        user.set(null);
+      }
     }
   });
   

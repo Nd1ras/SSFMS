@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { user } from '../stores.js';
+  import { user } from '../store.js';
   import { api } from '../api.js';
   import { createEventDispatcher } from 'svelte';
   
@@ -8,16 +8,23 @@
   
   let data = null;
   let loading = true;
+  let error = '';
   
   onMount(async () => {
     try {
       data = await api.getDashboard();
     } catch (err) {
       console.error(err);
+      error = err?.message || 'Failed to load dashboard';
     } finally {
       loading = false;
     }
   });
+
+  $: summary = data?.summary || { total: 0, active: 0, atRisk: 0, completed: 0 };
+  $: byCrop = data?.byCrop || {};
+  $: byStage = data?.byStage || {};
+  $: recentUpdates = data?.recentUpdates || [];
   
   function getStatusColor(status) {
     const colors = {
@@ -31,25 +38,27 @@
 
 {#if loading}
   <div class="loading">Loading dashboard...</div>
+{:else if error}
+  <div class="error">{error}</div>
 {:else if data}
   <div class="dashboard">
     <h2>Dashboard</h2>
     
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-value">{data.summary.total}</div>
+        <div class="stat-value">{summary.total}</div>
         <div class="stat-label">Total Fields</div>
       </div>
       <div class="stat-card active">
-        <div class="stat-value">{data.summary.active}</div>
+        <div class="stat-value">{summary.active}</div>
         <div class="stat-label">Active</div>
       </div>
       <div class="stat-card risk">
-        <div class="stat-value">{data.summary.atRisk}</div>
+        <div class="stat-value">{summary.atRisk}</div>
         <div class="stat-label">At Risk</div>
       </div>
       <div class="stat-card completed">
-        <div class="stat-value">{data.summary.completed}</div>
+        <div class="stat-value">{summary.completed}</div>
         <div class="stat-label">Completed</div>
       </div>
     </div>
@@ -57,11 +66,11 @@
     <div class="dashboard-grid">
       <div class="card">
         <h3>By Crop Type</h3>
-        {#if Object.keys(data.byCrop).length === 0}
+        {#if Object.keys(byCrop).length === 0}
           <p class="empty">No data available</p>
         {:else}
           <div class="list">
-            {#each Object.entries(data.byCrop) as [crop, count]}
+            {#each Object.entries(byCrop) as [crop, count]}
               <div class="list-item">
                 <span>{crop}</span>
                 <span class="badge">{count}</span>
@@ -74,11 +83,11 @@
       <div class="card">
         <h3>By Stage</h3>
         <div class="stages">
-          {#each Object.entries(data.byStage) as [stage, count]}
+          {#each Object.entries(byStage) as [stage, count]}
             <div class="stage-bar">
               <div class="stage-label">{stage}</div>
               <div class="stage-track">
-                <div class="stage-fill" style="width: {(count / data.summary.total * 100) || 0}%"></div>
+                <div class="stage-fill" style="width: {summary.total ? (count / summary.total * 100) : 0}%"></div>
               </div>
               <div class="stage-count">{count}</div>
             </div>
@@ -89,7 +98,7 @@
     
     <div class="card recent-updates">
       <h3>Recent Updates</h3>
-      {#if data.recentUpdates.length === 0}
+      {#if recentUpdates.length === 0}
         <p class="empty">No updates yet</p>
       {:else}
         <table>
@@ -103,7 +112,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each data.recentUpdates as update}
+            {#each recentUpdates as update}
               <tr>
                 <td>
                   <button class="link" on:click={() => dispatch('navigate', { page: 'field-detail', id: update.field_id })}>
@@ -283,5 +292,11 @@
     text-align: center;
     padding: 3rem;
     color: #718096;
+  }
+
+  .error {
+    text-align: center;
+    padding: 3rem;
+    color: #c53030;
   }
 </style>

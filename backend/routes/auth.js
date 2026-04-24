@@ -4,21 +4,24 @@ const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 const router = express.Router();
 
-// Seed users for demo
-router.post("/seed", async (req, res) => {
-	try {
-		const adminHash = await bcrypt.hash("admin123", 10);
-		const agentHash = await bcrypt.hash("agent123", 10);
+async function seedUsers() {
+	const adminHash = await bcrypt.hash("admin123", 10);
+	const agentHash = await bcrypt.hash("agent123", 10);
 
-		await pool.query(
-			`
+	await pool.query(
+		`
       INSERT INTO users (username, password_hash, role) 
       VALUES ('admin', $1, 'admin'), ('agent1', $2, 'field_agent')
       ON CONFLICT DO NOTHING
     `,
-			[adminHash, agentHash],
-		);
+		[adminHash, agentHash],
+	);
+}
 
+// Seed users for demo
+router.post("/seed", async (req, res) => {
+	try {
+		await seedUsers();
 		res.json({ message: "Users seeded" });
 	} catch (err) {
 		res.status(500).json({ error: err.message });
@@ -53,3 +56,4 @@ router.post("/login", async (req, res) => {
 });
 
 module.exports = router;
+module.exports.seed = seedUsers;

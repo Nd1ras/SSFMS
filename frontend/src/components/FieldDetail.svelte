@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { user } from '../stores.js';
+  import { user } from '../store.js';
   import { api } from '../api.js';
   import { createEventDispatcher } from 'svelte';
   
@@ -85,8 +85,8 @@
           <h3>Update Progress</h3>
           <form on:submit|preventDefault={submitUpdate}>
             <div class="form-group">
-              <label>New Stage</label>
-              <select bind:value={newStage}>
+              <label for="new-stage">New Stage</label>
+              <select id="new-stage" bind:value={newStage}>
                 {#each stages as stage}
                   <option value={stage} disabled={stages.indexOf(stage) < stages.indexOf(field.current_stage)}>
                     {stage}
@@ -95,8 +95,8 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Notes / Observations</label>
-              <textarea bind:value={notes} rows="3" placeholder="Add observations..."></textarea>
+              <label for="stage-notes">Notes / Observations</label>
+              <textarea id="stage-notes" bind:value={notes} rows="3" placeholder="Add observations..."></textarea>
             </div>
             <button type="submit" class="btn-primary" disabled={newStage === field.current_stage && !notes}>
               Submit Update

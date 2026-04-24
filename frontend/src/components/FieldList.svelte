@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
-  import { user } from '../stores.js'
+  import { user } from '../store.js'
   import { api } from '../api.js'
   
   const dispatch = createEventDispatcher()
@@ -175,32 +175,32 @@
 
 <!-- Create Modal -->
 {#if showCreateModal}
-  <div class="modal-overlay" on:click={() => showCreateModal = false}>
-    <div class="modal" on:click|stopPropagation>
+  <div class="modal-overlay" on:click={() => showCreateModal = false} on:keydown={(e) => e.key === 'Escape' && (showCreateModal = false)} role="button" tabindex="0">
+    <div class="modal" on:click|stopPropagation on:keydown|stopPropagation role="dialog" aria-modal="true" tabindex="-1">
       <div class="modal-header">
         <h3>Create New Field</h3>
-        <button class="close-btn" on:click={() => showCreateModal = false}>×</button>
+        <button class="close-btn" on:click={() => (showCreateModal = false)} aria-label="Close create field modal">×</button>
       </div>
       
       <form on:submit|preventDefault={createField}>
         <div class="form-group">
-          <label>Field Name</label>
-          <input type="text" bind:value={newField.name} required placeholder="e.g. North Plot A" />
+          <label for="field-name">Field Name</label>
+          <input id="field-name" type="text" bind:value={newField.name} required placeholder="e.g. North Plot A" />
         </div>
         
         <div class="form-group">
-          <label>Crop Type</label>
-          <input type="text" bind:value={newField.crop_type} required placeholder="e.g. Corn, Wheat, Soybeans" />
+          <label for="crop-type">Crop Type</label>
+          <input id="crop-type" type="text" bind:value={newField.crop_type} required placeholder="e.g. Corn, Wheat, Soybeans" />
         </div>
         
         <div class="form-group">
-          <label>Planting Date</label>
-          <input type="date" bind:value={newField.planting_date} required />
+          <label for="planting-date">Planting Date</label>
+          <input id="planting-date" type="date" bind:value={newField.planting_date} required />
         </div>
         
         <div class="form-group">
-          <label>Assign to Agent (optional)</label>
-          <input type="number" bind:value={newField.assigned_to} placeholder="Agent User ID" />
+          <label for="assigned-agent">Assign to Agent (optional)</label>
+          <input id="assigned-agent" type="number" bind:value={newField.assigned_to} placeholder="Agent User ID" />
         </div>
         
         <div class="modal-actions">
