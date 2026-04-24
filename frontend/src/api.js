@@ -1,4 +1,4 @@
-const API_URL = "https://ssfms.onrender.com";
+const API_URL = "https://ssfms.onrender.com/api";
 
 function getToken() {
 	return localStorage.getItem("token");
