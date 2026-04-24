@@ -55,7 +55,10 @@ const dashboardRoutes = require('./routes/dashboard');
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: ['https://ssfms.netlify.app', 'http://localhost:5173'],
+    credentials: true
+  }));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
