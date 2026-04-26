@@ -119,13 +119,6 @@ npm run dev        # Starts dev server on port 5173
 
 5. **Simple Auth:** JWT stored in localStorage. In production, consider httpOnly cookies + refresh tokens.
 
-## Trade-offs & Future Improvements
-
-- **No pagination:** Kept simple for demo. Add `LIMIT/OFFSET` for production scale.
-- **No image uploads:** Notes are text-only. Could extend with file storage (S3/local).
-- **Agent assignment by ID:** Currently uses raw user IDs. A dropdown with agent names would be more user-friendly.
-- **No email notifications:** "At Risk" fields are visible in dashboard but not actively alerted.
-- **Single JWT secret:** In production, use asymmetric keys (RS256) and key rotation.
 
 ## Screenshots
 ![image](./frontend/assets/log_in_page.png)
